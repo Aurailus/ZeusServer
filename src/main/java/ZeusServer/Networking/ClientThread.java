@@ -21,7 +21,6 @@ public class ClientThread extends Thread implements Runnable {
     private MapGen mapGen;
 
     private ThreadPoolExecutor mapGenPool;
-    private ArrayList<Future> mapGenFutures;
 
     public ClientThread(Socket socket) {
         this.socket = socket;
@@ -33,11 +32,9 @@ public class ClientThread extends Thread implements Runnable {
         pacman.start();
         alive = true;
 
-        mapGenPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
-        mapGenPool.setMaximumPoolSize(16);
+        mapGenPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(16);
+        mapGenPool.setMaximumPoolSize(48);
         mapGenPool.setKeepAliveTime(32, TimeUnit.SECONDS);
-
-        mapGenFutures = new ArrayList<>();
     }
 
     private void update() {
@@ -57,7 +54,7 @@ public class ClientThread extends Thread implements Runnable {
     }
 
     private void deferredRenderChunk(PacketData in) {
-        mapGenFutures.add(mapGenPool.submit(() -> {
+        mapGenPool.submit(() -> {
             Vector3i position = VecUtils.stringToVector(new String(in.data, StandardCharsets.ISO_8859_1));
             if (position == null) return;
             StringBuilder s = new StringBuilder();
@@ -72,7 +69,7 @@ public class ClientThread extends Thread implements Runnable {
             s.append(new String(bytes, StandardCharsets.ISO_8859_1));
 
             pacman.sendPacket(PacketType.BLOCK_CHUNK, s.toString());
-        }));
+        });
     }
 
     private ArrayList<short[]> generateSides(Vector3i pos) {
