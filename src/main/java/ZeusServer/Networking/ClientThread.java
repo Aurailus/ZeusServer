@@ -6,10 +6,7 @@ import org.joml.Vector3i;
 
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -36,8 +33,8 @@ public class ClientThread extends Thread implements Runnable {
         pacman.start();
         alive = true;
 
-        mapGenPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(32);
-        mapGenPool.setMaximumPoolSize(64);
+        mapGenPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
+        mapGenPool.setMaximumPoolSize(16);
         mapGenPool.setKeepAliveTime(32, TimeUnit.SECONDS);
 
         mapGenFutures = new ArrayList<>();
