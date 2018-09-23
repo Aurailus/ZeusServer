@@ -32,8 +32,8 @@ public class ClientThread extends Thread implements Runnable {
         pacman.start();
         alive = true;
 
-        mapGenPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(16);
-        mapGenPool.setMaximumPoolSize(48);
+        mapGenPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(32);
+        mapGenPool.setMaximumPoolSize(96);
         mapGenPool.setKeepAliveTime(32, TimeUnit.SECONDS);
     }
 
@@ -63,7 +63,7 @@ public class ClientThread extends Thread implements Runnable {
 
             System.out.println("Generating chunk at position " + position);
 
-            var bytes = ChunkSerializer.encodeChunk(generateChunk(position), generateSides(position));
+            var bytes = ChunkSerializer.encodeChunk(mapGen.generateChunk(position), generateSides(position));
             if (bytes == null) return;
 
             s.append(new String(bytes, StandardCharsets.ISO_8859_1));
@@ -112,20 +112,6 @@ public class ClientThread extends Thread implements Runnable {
         sides.add(array);
 
         return sides;
-    }
-
-    private short[] generateChunk(Vector3i pos) {
-        var chunk = new short[4096];
-
-        for (var i = 0; i < CHUNK_SIZE; i++) {
-            for (var j = 0; j < CHUNK_SIZE; j++) {
-                for (var k = 0; k < CHUNK_SIZE; k++) {
-                    short fill = mapGen.getBlock(i + pos.x*CHUNK_SIZE, j + pos.y*CHUNK_SIZE, k + pos.z*CHUNK_SIZE);
-                    chunk[i + CHUNK_SIZE * (j + CHUNK_SIZE * k)] = fill;
-                }
-            }
-        }
-        return chunk;
     }
 
     @Override
