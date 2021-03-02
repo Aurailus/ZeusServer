@@ -1,4 +1,6 @@
+# Superseded by [Aurailus/Zepha](https://github.com/Aurailus/Zepha).
+
 # ZeusClient
 Server for ZeusClient
 
-Benjamin Collings, 2018, All rights reserved.
+Auri Collings, 2018, All rights reserved.
